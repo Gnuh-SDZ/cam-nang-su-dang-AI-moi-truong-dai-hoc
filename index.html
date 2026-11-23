@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Cẩm nang sử dụng AI môi trường đại học – Nhóm 7</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* 
+       1. HỆ THỐNG MÀU SẮC & BIẾN GIAO DIỆN (LIGHT & DARK MODE)
+      */
+    :root {
+      --bg: #F5F8FC;
+      --card: #FFFFFF;
+      --ink: #14233F;
+      --muted: #4D5B75;
+      --line: #C9D3E3;
+      --hl: #FFD24A;
+      --p1: #2F6FED;
+      --p2: #0E9F8E;
+      --p3: #E0553D;
+
+      --header-bg: rgba(245, 248, 252, 0.92);
+      --hl-underline: rgba(255, 210, 74, 0.78);
+      --soft-hover: rgba(20, 35, 63, 0.05);
+      --shadow-card: 0 2px 10px rgba(20, 35, 63, 0.05);
+      --shadow-modal: 0 20px 45px rgba(20, 35, 63, 0.22);
+      color-scheme: light;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0F1A2E;
+      --card: #17253F;
+      --ink: #EEF3FB;
+      --muted: #A9B7CF;
+      --line: #2C3E60;
+      --hl: #FFD24A;
+      --p1: #6C9BFF;
+      --p2: #3CC9B6;
+      --p3: #FF8A72;
+
+      --header-bg: rgba(15, 26, 46, 0.92);
+      --hl-underline: rgba(255, 210, 74, 0.34);
+      --soft-hover: rgba(238, 243, 251, 0.07);
+      --shadow-card: 0 3px 14px rgba(0, 0, 0, 0.26);
+      --shadow-modal: 0 22px 50px rgba(0, 0, 0, 0.55);
+      color-scheme: dark;
+    }
+
+    /*
+       2. THIẾT LẬP CƠ BẢN & BỐ CỤC CHUNG
+       */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 84px;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.58;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, textarea {
+      font-family: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding-left: clamp(16px, 3.5vw, 32px);
+      padding-right: clamp(16px, 3.5vw, 32px);
+    }
+
+    /* 
+       3. THANH ĐIỀU HƯỚNG CỐ ĐỊNH (STICKY HEADER)
+        */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--header-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 68px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background-color: var(--p1);
+      color: #FFFFFF;
+      display: grid;
+      place-items: center;
+    }
+
+    :root[data-theme="dark"] .brand-icon {
+      color: #0F1A2E;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: clamp(0.9rem, 1.8vw, 1.04rem);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background-color: var(--hl);
+      color: #14233F;
+      font-size: 0.72rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .nav-desktop {
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+
+    @media (min-width: 820px) {
+      .nav-desktop {
+        display: flex;
+      }
+    }
+
+    .nav-link {
+      padding: 8px 13px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--soft-hover);
+      color: var(--p1);
+    }
+
+    .btn-header {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background-color: var(--card);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .btn-header:hover {
+      border-color: var(--p1);
+    }
+
+    .btn-mobile-toggle {
+      display: inline-flex;
+    }
+
+    @media (min-width: 820px) {
+      .btn-mobile-toggle {
+        display: none;
+      }
+    }
+
+    .mobile-drawer {
+      display: none;
+      padding: 10px 0 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mobile-drawer.is-open {
+      display: block;
+    }
+
+    @media (min-width: 820px) {
+      .mobile-drawer {
+        display: none !important;
+      }
+    }
+
+    .mobile-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .mobile-nav-link {
+      display: block;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background-color: var(--card);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* =========================================================================
+       4. PHẦN MỞ ĐẦU (HERO)
+       ========================================================================= */
+    main {
+      padding-top: clamp(26px, 4.2vw, 46px);
+      padding-bottom: 52px;
+    }
+
+    .hero {
+      max-width: 780px;
+      margin-bottom: clamp(28px, 4.5vw, 44px);
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background-color: var(--card);
+      color: var(--p1);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.85rem, 4.6vw, 2.95rem);
+      font-weight: 800;
+      line-height: 1.16;
+      letter-spacing: -0.02em;
+    }
+
+    .hl-mark {
+      background: linear-gradient(transparent 55%, var(--hl-underline) 55%);
+      color: inherit;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+
+    .hero-desc {
+      margin: 0;
+      font-size: clamp(0.98rem, 1.8vw, 1.12rem);
+      color: var(--muted);
+      max-width: 660px;
+    }
+
+    /* =========================================================================
+       5. PHẦN 1: 8 NGUYÊN TẮC (BỘ LỌC GIAI ĐOẠN + LƯỚI 3 THẺ)
+       ========================================================================= */
+    .section-block {
+      margin-bottom: clamp(36px, 5.5vw, 56px);
+    }
+
+    .section-head {
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      margin: 0 0 4px;
+      font-size: clamp(1.28rem, 2.6vw, 1.65rem);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .section-head p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background-color: var(--card);
+      color: var(--ink);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+      transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--p1);
+    }
+
+    .filter-btn.is-active {
+      background-color: var(--ink);
+      border-color: var(--ink);
+      color: var(--bg);
+    }
+
+    .stage-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .dot-p1 { background-color: var(--p1); }
+    .dot-p2 { background-color: var(--p2); }
+    .dot-p3 { background-color: var(--p3); }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .phases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .phases-grid.is-single {
+      max-width: 680px;
+    }
+
+    .phase-card {
+      --c: var(--p1);
+      background-color: var(--card);
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--c);
+      border-radius: 14px;
+      padding: 18px 18px 10px;
+      box-shadow: var(--shadow-card);
+      animation: fadeSlideIn 0.24s ease;
+    }
+
+    .phase-card.p1 { --c: var(--p1); }
+    .phase-card.p2 { --c: var(--p2); }
+    .phase-card.p3 { --c: var(--p3); }
+
+    .phase-card.is-hidden {
+      display: none;
+    }
+
+    .phase-card-head {
+      margin-bottom: 10px;
+    }
+
+    .phase-card-head h3 {
+      margin: 0 0 3px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--c);
+    }
+
+    .phase-card-head p {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .principle-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .principle-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .num-circle {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: var(--c);
+      color: #FFFFFF;
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      margin-top: 1px;
+    }
+
+    :root[data-theme="dark"] .num-circle {
+      color: #0F1A2E;
+    }
+
+    .principle-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .principle-body b {
+      display: block;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.38;
+      color: var(--ink);
+    }
+
+    .principle-body span {
+      display: block;
+      margin-top: 3px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.48;
+    }
+
+    .btn-citation-open {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 10px;
+      padding: 8px 13px;
+      border-radius: 9px;
+      border: 1px solid var(--p3);
+      background-color: transparent;
+      color: var(--p3);
+      font-size: 0.81rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .btn-citation-open:hover {
+      background-color: var(--p3);
+      color: #FFFFFF;
+    }
+
+    :root[data-theme="dark"] .btn-citation-open:hover {
+      color: #0F1A2E;
+    }
+
+    /* =========================================================================
+       6. PHẦN 2: LƯU Ý KHI SỬ DỤNG AI TRONG HỌC TẬP (TĨNH HOÀN TOÀN)
+       ========================================================================= */
+    .static-notes-card {
+      background-color: var(--card);
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--hl);
+      border-radius: 14px;
+      padding: clamp(18px, 3vw, 24px);
+      box-shadow: var(--shadow-card);
+      cursor: default;
+    }
+
+    .static-notes-head {
+      margin-bottom: 12px;
+      cursor: default;
+    }
+
+    .static-notes-head h2 {
+      margin: 0 0 4px;
+      font-size: clamp(1.22rem, 2.4vw, 1.5rem);
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .static-notes-head p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .static-notes-grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+      column-gap: 28px;
+      cursor: default;
+    }
+
+    .static-note-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      cursor: default;
+    }
+
+    .note-badge-sq {
+      flex: 0 0 auto;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background-color: var(--p1);
+      color: #FFFFFF;
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      margin-top: 1px;
+      cursor: default;
+    }
+
+    :root[data-theme="dark"] .note-badge-sq {
+      color: #0F1A2E;
+    }
+
+    .static-note-item b {
+      display: block;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.36;
+      color: var(--ink);
+    }
+
+    .static-note-item span {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    /* =========================================================================
+       7. PHẦN 3: KHUYẾN NGHỊ (3 THẺ NGANG NHAU)
+       ========================================================================= */
+    .rec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .rec-card {
+      --c: var(--p1);
+      background-color: var(--card);
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--c);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .rec-card.p1 { --c: var(--p1); }
+    .rec-card.p2 { --c: var(--p2); }
+    .rec-card.p3 { --c: var(--p3); }
+
+    .rec-card h3 {
+      margin: 0 0 6px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--c);
+    }
+
+    .rec-lead {
+      margin: 0 0 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .rec-card ul {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--muted);
+      font-size: 0.87rem;
+    }
+
+    .rec-card li {
+      padding: 4px 0;
+      line-height: 1.5;
+    }
+
+    /* =========================================================================
+       8. CHÂN TRANG (FOOTER)
+       ========================================================================= */
+    .site-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 2px solid var(--ink);
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .site-footer strong {
+      color: var(--ink);
+      font-size: 0.92rem;
+    }
+
+    .footer-link {
+      color: var(--p1);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .footer-link:hover {
+      opacity: 0.85;
+    }
+
+    /* =========================================================================
+       9. HỘP THOẠI TẠO MẪU GHI CHÚ TRÍCH DẪN AI (MODAL)
+       ========================================================================= */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background-color: rgba(10, 18, 34, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background-color: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: clamp(18px, 3vw, 24px);
+      box-shadow: var(--shadow-modal);
+    }
+
+    .modal-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 16px;
+    }
+
+    .modal-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--p3);
+      margin-bottom: 2px;
+    }
+
+    .modal-top h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .modal-close-btn {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-size: 1.25rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover {
+      border-color: var(--p3);
+      color: var(--p3);
+    }
+
+    .modal-group {
+      margin-bottom: 16px;
+    }
+
+    .modal-label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .tool-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 9px;
+    }
+
+    .tool-pill {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-size: 0.81rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tool-pill.is-selected {
+      background-color: var(--p1);
+      border-color: var(--p1);
+      color: #FFFFFF;
+    }
+
+    :root[data-theme="dark"] .tool-pill.is-selected {
+      color: #0F1A2E;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-size: 0.86rem;
+    }
+
+    .text-input:focus, .preview-textarea:focus {
+      outline: 2px solid var(--p1);
+      outline-offset: 1px;
+    }
+
+    .purpose-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: 8px;
+    }
+
+    .purpose-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 11px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background-color: var(--bg);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .purpose-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--p1);
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .preview-textarea {
+      width: 100%;
+      min-height: 104px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-size: 0.85rem;
+      line-height: 1.55;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn-secondary {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: none;
+      background-color: var(--p1);
+      color: #FFFFFF;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    :root[data-theme="dark"] .btn-primary {
+      color: #0F1A2E;
+    }
+
+    /* Thông báo nổi (Toast) */
+    .toast-banner {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 16px;
+      border-radius: 11px;
+      background-color: var(--ink);
+      color: var(--bg);
+      font-size: 0.84rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-modal);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .toast-banner.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast-indicator {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: var(--hl);
+      flex: 0 0 auto;
+    }
+  </style>
+</head>
+<body>
+  
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="#" class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <div class="brand-group">
+            <span class="brand-title">Cẩm nang sử dụng AI môi trường đại học</span>
+            <span class="brand-badge">Nhóm 7</span>
+          </div>
+        </a>
+
+        <div class="header-right">
+          <nav class="nav-desktop" aria-label="Điều hướng chính">
+            <a href="#nguyen-tac" class="nav-link">8 Nguyên tắc</a>
+            <a href="#luu-y" class="nav-link">10 Lưu ý</a>
+            <a href="#khuyen-nghi" class="nav-link">Khuyến nghị</a>
+          </nav>
+
+          <button id="themeToggleBtn" type="button" class="btn-header" aria-label="Chuyển đổi giao diện Sáng / Tối">
+            <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <span id="themeLabelText">Tối</span>
+          </button>
+
+          <button id="mobileMenuBtn" type="button" class="btn-header btn-mobile-toggle" aria-expanded="false" aria-controls="mobileDrawer" aria-label="Mở menu điều hướng">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Menu rút gọn trên thiết bị di động -->
+      <div id="mobileDrawer" class="mobile-drawer">
+        <div class="mobile-nav-grid">
+          <a href="#nguyen-tac" class="mobile-nav-link">8 Nguyên tắc</a>
+          <a href="#luu-y" class="mobile-nav-link">10 Lưu ý</a>
+          <a href="#khuyen-nghi" class="mobile-nav-link">Khuyến nghị</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- =====================================================================
+         2. PHẦN MỞ ĐẦU (HERO)
+         ===================================================================== -->
+    <section class="hero">
+      <div class="hero-eyebrow">CẨM NANG SỬ DỤNG AI MÔI TRƯỜNG ĐẠI HỌC</div>
+      <h1>Dùng AI, nhưng vẫn là người tự học</h1>
+      <p class="hero-desc">Các nguyên tắc cho sinh viên, đi theo thứ tự một bài làm: trước khi hỏi, trong khi dùng và khi nộp bài.</p>
+    </section>
+
+    <!-- =====================================================================
+         3. PHẦN 1 - 8 NGUYÊN TẮC (id="nguyen-tac")
+         ===================================================================== -->
+    <section id="nguyen-tac" class="section-block">
+      <div class="section-head">
+        <h2>8 Nguyên tắc</h2>
+        <p>Lộ trình giữ vững tư duy chủ động theo từng giai đoạn thực hiện bài làm</p>
+      </div>
+
+      <!-- Thanh nút lọc giai đoạn gồm 4 nút -->
+      <div class="filter-bar" role="tablist" aria-label="Lọc nguyên tắc theo giai đoạn">
+        <button type="button" class="filter-btn is-active" data-filter="all">Tất cả (8)</button>
+        <button type="button" class="filter-btn" data-filter="p1">
+          <span class="stage-dot dot-p1"></span>1. Trước khi hỏi AI
+        </button>
+        <button type="button" class="filter-btn" data-filter="p2">
+          <span class="stage-dot dot-p2"></span>2. Trong khi dùng AI
+        </button>
+        <button type="button" class="filter-btn" data-filter="p3">
+          <span class="stage-dot dot-p3"></span>3. Khi nộp bài
+        </button>
+      </div>
+
+      <!-- Lưới 3 thẻ -->
+      <div id="phasesGrid" class="phases-grid">
+        <!-- Thẻ 1 (viền trái màu --p1) -->
+        <article class="phase-card p1" data-stage="p1">
+          <div class="phase-card-head">
+            <h3>Trước khi hỏi AI</h3>
+            <p>Chuẩn bị đầu óc và biết luật chơi</p>
+          </div>
+          <ol class="principle-list">
+            <li class="principle-item">
+              <div class="num-circle">1</div>
+              <div class="principle-body">
+                <b>Tự suy nghĩ trước, hỏi AI sau</b>
+                <span>Nháp ý của mình rồi mới nhờ AI góp ý.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <div class="num-circle">2</div>
+              <div class="principle-body">
+                <b>Đọc quy định của trường và giảng viên</b>
+                <span>Biết khi nào được dùng AI và dùng đến mức nào.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <div class="num-circle">3</div>
+              <div class="principle-body">
+                <b>Không đưa dữ liệu cá nhân hoặc tài liệu mật</b>
+                <span>Thông tin gõ vào công cụ AI có thể bị lưu lại.</span>
+              </div>
+            </li>
+          </ol>
+        </article>
+
+        <!-- Thẻ 2 (viền trái màu --p2) -->
+        <article class="phase-card p2" data-stage="p2">
+          <div class="phase-card-head">
+            <h3>Trong khi dùng AI</h3>
+            <p>Giữ vai trò người học</p>
+          </div>
+          <ol class="principle-list">
+            <li class="principle-item">
+              <div class="num-circle">4</div>
+              <div class="principle-body">
+                <b>Coi AI là người hướng dẫn, không phải người làm bài thay</b>
+                <span>Hỏi “vì sao”, nhờ giải thích từng bước.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <div class="num-circle">5</div>
+              <div class="principle-body">
+                <b>Dùng AI để giải thích và luyện tập</b>
+                <span>Nhờ ra câu hỏi ôn tập thay vì né việc học.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <div class="num-circle">6</div>
+              <div class="principle-body">
+                <b>Kiểm tra lại mọi thông tin AI đưa ra</b>
+                <span>AI có thể trả lời sai. Đối chiếu với giáo trình, nguồn uy tín.</span>
+              </div>
+            </li>
+          </ol>
+        </article>
+
+        <!-- Thẻ 3 (viền trái màu --p3) -->
+        <article class="phase-card p3" data-stage="p3">
+          <div class="phase-card-head">
+            <h3>Khi nộp bài</h3>
+            <p>Trung thực với chính mình</p>
+          </div>
+          <ol class="principle-list">
+            <li class="principle-item">
+              <div class="num-circle">7</div>
+              <div class="principle-body">
+                <b>Không nộp nguyên văn sản phẩm của AI như của mình</b>
+                <span>Viết lại bằng hiểu biết và lời của bản thân.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <div class="num-circle">8</div>
+              <div class="principle-body">
+                <b>Nói rõ khi bài làm có AI hỗ trợ</b>
+                <span>Ghi chú công cụ đã dùng và dùng vào việc gì.</span>
+                <button id="openModalBtn" type="button" class="btn-citation-open">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                  <span>Tạo mẫu ghi chú trích dẫn AI</span>
+                </button>
+              </div>
+            </li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         4. PHẦN 2 - LƯU Ý KHI SỬ DỤNG AI TRONG HỌC TẬP (id="luu-y", TĨNH HOÀN TOÀN)
+         ===================================================================== -->
+    <section id="luu-y" class="section-block">
+      <div class="static-notes-card">
+        <div class="static-notes-head">
+          <h2>Lưu ý khi sử dụng AI trong học tập</h2>
+          <p>10 điều cần nhớ mỗi lần mở công cụ AI</p>
+        </div>
+
+        <ol class="static-notes-grid">
+          <li class="static-note-item">
+            <div class="note-badge-sq">1</div>
+            <div>
+              <b>Coi AI là trợ lý</b>
+              <span>Trợ lý hỗ trợ chứ không làm thay.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">2</div>
+            <div>
+              <b>Luôn kiểm chứng</b>
+              <span>Đối chiếu lại với tài liệu gốc.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">3</div>
+            <div>
+              <b>Giữ liêm chính</b>
+              <span>Không sao chép, đạo văn 100%.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">4</div>
+            <div>
+              <b>Trích dẫn minh bạch</b>
+              <span>Ghi rõ nguồn khi có dùng AI.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">5</div>
+            <div>
+              <b>Tư duy phản biện</b>
+              <span>Không tin tưởng tuyệt đối, tự phân tích.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">6</div>
+            <div>
+              <b>Phát huy tự học</b>
+              <span>Đặt tự học làm gốc, không ỷ lại.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">7</div>
+            <div>
+              <b>Prompt thông minh</b>
+              <span>Học cách ra lệnh rõ ràng, cụ thể.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">8</div>
+            <div>
+              <b>Bảo mật thông tin</b>
+              <span>Không chia sẻ dữ liệu cá nhân lên AI.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">9</div>
+            <div>
+              <b>Đồng hành đa chiều</b>
+              <span>Dùng AI để thảo luận, phản biện thử.</span>
+            </div>
+          </li>
+          <li class="static-note-item">
+            <div class="note-badge-sq">10</div>
+            <div>
+              <b>Chủ động tiếp thu</b>
+              <span>Biến tri thức AI thành của mình.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         5. PHẦN 3 - KHUYẾN NGHỊ (id="khuyen-nghi")
+         ===================================================================== -->
+    <section id="khuyen-nghi" class="section-block">
+      <div class="section-head">
+        <h2>Khuyến nghị</h2>
+      </div>
+
+      <div class="rec-grid">
+        <!-- Với sinh viên (viền trái --p1) -->
+        <article class="rec-card p1">
+          <h3>Với sinh viên</h3>
+          <p class="rec-lead">Biến AI thành công cụ học, không thành lối tắt.</p>
+          <ul>
+            <li>Tự làm bản nháp trước, chỉ nhờ AI góp ý và giải thích.</li>
+            <li>Lưu lại công cụ đã dùng và câu hỏi đã hỏi để dễ trích dẫn.</li>
+            <li>Đối chiếu mọi thông tin quan trọng với giáo trình, nguồn uy tín.</li>
+          </ul>
+        </article>
+
+        <!-- Với giảng viên (viền trái --p2) -->
+        <article class="rec-card p2">
+          <h3>Với giảng viên</h3>
+          <p class="rec-lead">Đặt rõ luật chơi ngay từ đầu môn học.</p>
+          <ul>
+            <li>Nêu rõ trong đề cương mức độ được phép dùng AI.</li>
+            <li>Ra bài tập yêu cầu trình bày quá trình suy nghĩ, không chỉ kết quả.</li>
+            <li>Hướng dẫn cách ghi nguồn khi có AI hỗ trợ.</li>
+          </ul>
+        </article>
+
+        <!-- Với nhà trường (viền trái --p3) -->
+        <article class="rec-card p3">
+          <h3>Với nhà trường</h3>
+          <p class="rec-lead">Xây khung chung để mọi người cùng thực hiện.</p>
+          <ul>
+            <li>Ban hành quy định thống nhất về dùng và trích dẫn AI.</li>
+            <li>Tổ chức tập huấn kỹ năng viết prompt và kiểm chứng thông tin.</li>
+            <li>Nhắc sinh viên không đưa dữ liệu cá nhân lên công cụ AI.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         6. CHÂN TRANG (FOOTER)
+         ===================================================================== -->
+    <footer class="site-footer">
+      <strong>Nhóm 7 – Kỹ năng làm việc nhóm</strong><br>
+      <span>Số liệu khảo sát của nhóm: </span>
+      <a
+        href="https://docs.google.com/forms/d/1W1HDMVj-boeiFS6JreJnNZVXYS39YFpWF8Fdv-NyVy8/edit#responses"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer-link"
+      >
+        https://docs.google.com/forms/d/1W1HDMVj-boeiFS6JreJnNZVXYS39YFpWF8Fdv-NyVy8/edit#responses
+      </a>
+    </footer>
+  </main>
+
+  <!-- =======================================================================
+       HỘP THOẠI TẠO MẪU GHI CHÚ TRÍCH DẪN AI (MẶC ĐỊNH DISPLAY: NONE)
+       ======================================================================= -->
+  <div id="citationModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <div class="modal-top">
+        <div>
+          <span class="modal-tag">Nguyên tắc 8 • Minh bạch học thuật</span>
+          <h3 id="modalTitle">Tạo mẫu ghi chú trích dẫn AI</h3>
+        </div>
+        <button id="closeModalBtn" type="button" class="modal-close-btn" aria-label="Đóng hộp thoại">&times;</button>
+      </div>
+
+      <!-- Chọn nhanh tên công cụ hoặc nhập tên khác -->
+      <div class="modal-group">
+        <label class="modal-label" for="toolNameInput">1. Chọn hoặc nhập tên công cụ AI đã sử dụng:</label>
+        <div class="tool-pills" id="toolPills">
+          <button type="button" class="tool-pill is-selected" data-tool="ChatGPT">ChatGPT</button>
+          <button type="button" class="tool-pill" data-tool="Gemini">Gemini</button>
+          <button type="button" class="tool-pill" data-tool="Claude">Claude</button>
+          <button type="button" class="tool-pill" data-tool="Copilot">Copilot</button>
+          <button type="button" class="tool-pill" data-tool="Khác">Nhập tên khác...</button>
+        </div>
+        <input id="toolNameInput" type="text" class="text-input" value="ChatGPT" placeholder="Nhập tên công cụ AI (ví dụ: Perplexity, NotebookLM...)">
+      </div>
+
+      <!-- Đánh dấu mục đích sử dụng -->
+      <div class="modal-group">
+        <span class="modal-label">2. Đánh dấu mục đích sử dụng AI:</span>
+        <div class="purpose-list" id="purposeGroup">
+          <label class="purpose-item">
+            <input type="checkbox" value="gợi ý dàn ý và cấu trúc triển khai" checked>
+            <span>Gợi ý dàn ý</span>
+          </label>
+          <label class="purpose-item">
+            <input type="checkbox" value="giải thích khái niệm chuyên môn">
+            <span>Giải thích khái niệm</span>
+          </label>
+          <label class="purpose-item">
+            <input type="checkbox" value="rà soát ngữ pháp và chính tả">
+            <span>Rà soát ngữ pháp/chính tả</span>
+          </label>
+          <label class="purpose-item">
+            <input type="checkbox" value="tạo câu hỏi ôn tập kiến thức">
+            <span>Tạo câu hỏi ôn tập</span>
+          </label>
+          <label class="purpose-item">
+            <input type="checkbox" value="hỗ trợ gỡ lỗi và giải thích mã nguồn (code)">
+            <span>Hỗ trợ gỡ lỗi/code</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Xem trước đoạn trích dẫn tiếng Việt -->
+      <div class="modal-group">
+        <label class="modal-label" for="citationPreview">3. Xem trước đoạn trích dẫn tiếng Việt:</label>
+        <textarea id="citationPreview" class="preview-textarea"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button id="cancelModalBtn" type="button" class="btn-secondary">Đóng</button>
+        <button id="copyCitationBtn" type="button" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>Sao chép mẫu ghi chú</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông báo nổi xác nhận sao chép -->
+  <div id="toastBanner" class="toast-banner" role="status" aria-live="polite">
+    <span class="toast-indicator"></span>
+    <span id="toastMessage">Đã sao chép mẫu ghi chú!</span>
+  </div>
+
+  <!-- =======================================================================
+       TOÀN BỘ JAVASCRIPT ĐẶT CUỐI BODY & BỌC TRONG DOMContentLoaded
+       ======================================================================= -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+
+      /* ---------------------------------------------------------------------
+         1. BỘ NHỚ AN TOÀN CHỐNG LỖI SANDBOX / IFRAME
+         --------------------------------------------------------------------- */
+      var memoryStorage = {};
+      var safeStorage = {
+        get: function (key) {
+          try {
+            return window.localStorage.getItem(key);
+          } catch (e) {
+            return Object.prototype.hasOwnProperty.call(memoryStorage, key) ? memoryStorage[key] : null;
+          }
+        },
+        set: function (key, value) {
+          memoryStorage[key] = value;
+          try {
+            window.localStorage.setItem(key, value);
+          } catch (e) {
+            /* Bỏ qua nếu localStorage bị hạn chế trong iframe */
+          }
+        }
+      };
+
+      /* ---------------------------------------------------------------------
+         2. CHUYỂN ĐỔI GIAO DIỆN SÁNG / TỐI
+         --------------------------------------------------------------------- */
+      var THEME_KEY = "nhom7_camnang_ai_theme";
+      var themeToggleBtn = document.getElementById("themeToggleBtn");
+      var themeIconSun = document.getElementById("themeIconSun");
+      var themeIconMoon = document.getElementById("themeIconMoon");
+      var themeLabelText = document.getElementById("themeLabelText");
+
+      function applyTheme(theme) {
+        var normalized = theme === "dark" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", normalized);
+
+        if (themeIconSun && themeIconMoon && themeLabelText) {
+          if (normalized === "dark") {
+            themeIconSun.style.display = "inline-block";
+            themeIconMoon.style.display = "none";
+            themeLabelText.textContent = "Sáng";
+          } else {
+            themeIconSun.style.display = "none";
+            themeIconMoon.style.display = "inline-block";
+            themeLabelText.textContent = "Tối";
+          }
+        }
+      }
+
+      var savedTheme = safeStorage.get(THEME_KEY);
+      if (savedTheme === "dark" || savedTheme === "light") {
+        applyTheme(savedTheme);
+      } else {
+        var prefersDark = false;
+        try {
+          prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        } catch (e) {
+          prefersDark = false;
+        }
+        applyTheme(prefersDark ? "dark" : "light");
+      }
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", function () {
+          var current = document.documentElement.getAttribute("data-theme");
+          var next = current === "dark" ? "light" : "dark";
+          applyTheme(next);
+          safeStorage.set(THEME_KEY, next);
+        });
+      }
+
+      /* ---------------------------------------------------------------------
+         3. MENU ĐIỀU HƯỚNG TRÊN THIẾT BỊ DI ĐỘNG
+         --------------------------------------------------------------------- */
+      var mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      var mobileDrawer = document.getElementById("mobileDrawer");
+
+      if (mobileMenuBtn && mobileDrawer) {
+        mobileMenuBtn.addEventListener("click", function () {
+          var isOpen = mobileDrawer.classList.toggle("is-open");
+          mobileMenuBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+
+        var mobileLinks = mobileDrawer.querySelectorAll("a");
+        mobileLinks.forEach(function (link) {
+          link.addEventListener("click", function () {
+            mobileDrawer.classList.remove("is-open");
+            mobileMenuBtn.setAttribute("aria-expanded", "false");
+          });
+        });
+      }
+
+      /* ---------------------------------------------------------------------
+         4. BỘ LỌC GIAI ĐOẠN CHO 8 NGUYÊN TẮC
+         --------------------------------------------------------------------- */
+      var filterBtns = document.querySelectorAll(".filter-btn");
+      var phaseCards = document.querySelectorAll(".phase-card");
+      var phasesGrid = document.getElementById("phasesGrid");
+
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var filterValue = btn.getAttribute("data-filter") || "all";
+
+          filterBtns.forEach(function (b) {
+            b.classList.remove("is-active");
+          });
+          btn.classList.add("is-active");
+
+          phaseCards.forEach(function (card) {
+            var stage = card.getAttribute("data-stage");
+            if (filterValue === "all" || stage === filterValue) {
+              card.classList.remove("is-hidden");
+            } else {
+              card.classList.add("is-hidden");
+            }
+          });
+
+          if (phasesGrid) {
+            if (filterValue === "all") {
+              phasesGrid.classList.remove("is-single");
+            } else {
+              phasesGrid.classList.add("is-single");
+            }
+          }
+        });
+      });
+
+      /* ---------------------------------------------------------------------
+         5. THÔNG BÁO NỔI (TOAST) & SAO CHÉP AN TOÀN
+         --------------------------------------------------------------------- */
+      var toastBanner = document.getElementById("toastBanner");
+      var toastMessage = document.getElementById("toastMessage");
+      var toastTimer = null;
+
+      function showToast(msg) {
+        if (!toastBanner || !toastMessage) return;
+        toastMessage.textContent = msg;
+        toastBanner.classList.add("is-visible");
+        if (toastTimer) {
+          clearTimeout(toastTimer);
+        }
+        toastTimer = setTimeout(function () {
+          toastBanner.classList.remove("is-visible");
+        }, 2800);
+      }
+
+      function fallbackTextareaCopy(text) {
+        var tempTextarea = document.createElement("textarea");
+        tempTextarea.value = text;
+        tempTextarea.setAttribute("readonly", "");
+        tempTextarea.style.position = "fixed";
+        tempTextarea.style.top = "-9999px";
+        tempTextarea.style.left = "-9999px";
+        document.body.appendChild(tempTextarea);
+        tempTextarea.focus();
+        tempTextarea.select();
+
+        var succeeded = false;
+        try {
+          succeeded = document.execCommand("copy");
+        } catch (e) {
+          succeeded = false;
+        }
+        document.body.removeChild(tempTextarea);
+        return succeeded;
+      }
+
+      function copyTextSafely(text, onDone) {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function" && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(function () {
+            onDone(true);
+          }).catch(function () {
+            onDone(fallbackTextareaCopy(text));
+          });
+        } else {
+          onDone(fallbackTextareaCopy(text));
+        }
+      }
+
+      /* ---------------------------------------------------------------------
+         6. HỘP THOẠI TẠO MẪU GHI CHÚ TRÍCH DẪN AI
+         --------------------------------------------------------------------- */
+      var citationModal = document.getElementById("citationModal");
+      var openModalBtn = document.getElementById("openModalBtn");
+      var closeModalBtn = document.getElementById("closeModalBtn");
+      var cancelModalBtn = document.getElementById("cancelModalBtn");
+      var toolPills = document.querySelectorAll(".tool-pill");
+      var toolNameInput = document.getElementById("toolNameInput");
+      var purposeCheckboxes = document.querySelectorAll("#purposeGroup input[type='checkbox']");
+      var citationPreview = document.getElementById("citationPreview");
+      var copyCitationBtn = document.getElementById("copyCitationBtn");
+
+      function updateCitationPreview() {
+        if (!citationPreview) return;
+        var tool = toolNameInput && toolNameInput.value.trim() ? toolNameInput.value.trim() : "[Tên công cụ AI]";
+        var selectedPurposes = [];
+
+        purposeCheckboxes.forEach(function (cb) {
+          if (cb.checked && cb.value) {
+            selectedPurposes.push(cb.value);
+          }
+        });
+
+        var purposeText = selectedPurposes.length > 0
+          ? selectedPurposes.join("; ")
+          : "tham khảo và hỗ trợ quá trình tự học";
+
+        citationPreview.value =
+          "Ghi chú sử dụng AI: Trong quá trình thực hiện bài làm này, tôi đã sử dụng công cụ " +
+          tool +
+          " để " +
+          purposeText +
+          ". Toàn bộ nội dung cuối cùng đã được tôi đối chiếu với tài liệu uy tín, tự phân tích và viết lại bằng hiểu biết của bản thân.";
+      }
+
+      function openCitationModal() {
+        if (!citationModal) return;
+        updateCitationPreview();
+        citationModal.classList.add("is-open");
+      }
+
+      function closeCitationModal() {
+        if (!citationModal) return;
+        citationModal.classList.remove("is-open");
+      }
+
+      if (openModalBtn) {
+        openModalBtn.addEventListener("click", openCitationModal);
+      }
+
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener("click", closeCitationModal);
+      }
+
+      if (cancelModalBtn) {
+        cancelModalBtn.addEventListener("click", closeCitationModal);
+      }
+
+      /* Đóng khi click ra ngoài nền tối */
+      if (citationModal) {
+        citationModal.addEventListener("click", function (e) {
+          if (e.target === citationModal) {
+            closeCitationModal();
+          }
+        });
+      }
+
+      /* Đóng khi nhấn phím Escape */
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && citationModal && citationModal.classList.contains("is-open")) {
+          closeCitationModal();
+        }
+      });
+
+      /* Chọn nhanh tên công cụ AI */
+      toolPills.forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          toolPills.forEach(function (p) {
+            p.classList.remove("is-selected");
+          });
+          pill.classList.add("is-selected");
+
+          var chosenTool = pill.getAttribute("data-tool") || "";
+          if (toolNameInput) {
+            if (chosenTool === "Khác") {
+              toolNameInput.value = "";
+              toolNameInput.focus();
+            } else {
+              toolNameInput.value = chosenTool;
+            }
+          }
+          updateCitationPreview();
+        });
+      });
+
+      if (toolNameInput) {
+        toolNameInput.addEventListener("input", updateCitationPreview);
+      }
+
+      purposeCheckboxes.forEach(function (cb) {
+        cb.addEventListener("change", updateCitationPreview);
+      });
+
+      if (copyCitationBtn && citationPreview) {
+        copyCitationBtn.addEventListener("click", function () {
+          var content = citationPreview.value;
+          copyTextSafely(content, function (ok) {
+            if (ok) {
+              showToast("Đã sao chép mẫu ghi chú trích dẫn AI!");
+            } else {
+              citationPreview.focus();
+              citationPreview.select();
+              showToast("Vui lòng nhấn Ctrl+C để sao chép nội dung.");
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
